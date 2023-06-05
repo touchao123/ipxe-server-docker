@@ -1,0 +1,46 @@
+# Disable DNS server
+port=0
+
+# Enable ProxyDHCP
+dhcp-range=${IPXE_SERVER_IP},proxy
+log-dhcp
+
+# Compatibility with old and broken DHCP clients
+dhcp-no-override
+
+# Disable multicast and broadcast discovery, download the boot file immediately
+dhcp-option=vendor:PXEClient,6,2b
+
+# TFTP server
+enable-tftp
+tftp-root=/tftpboot
+# Run as root user
+user=root
+
+# Use EFI version of ipxe by default
+dhcp-boot=ipxe.efi
+
+# Detect BIOS only machines
+dhcp-vendorclass=set:BIOS,PXEClient:Arch:00000
+#dhcp-boot=tag:BIOS,undionly.kpxe
+
+
+# Detect different UEFI types
+dhcp-vendorclass=set:UEFI32,PXEClient:Arch:00006
+dhcp-boot=tag:UEFI32,ipxe-i386.efi
+dhcp-vendorclass=set:UEFI,PXEClient:Arch:00007
+dhcp-boot=tag:UEFI,ipxe.efi
+dhcp-vendorclass=set:UEFI64,PXEClient:Arch:00009
+dhcp-boot=tag:UEFI64,ipxe.efi
+
+
+# Detect ipxe requests
+dhcp-userclass=set:iPXE,iPXE
+dhcp-boot=tag:iPXE,${IPXE_SCRIPT_URL}
+
+# PXE menu (dnsmasq does not send DHCP replies if no menu is configured)
+pxe-prompt="Press F8 for boot menu", 2
+pxe-service=tag:iPXE,X86PC, "Boot iPXE script: ${IPXE_SCRIPT_URL}", ${IPXE_SCRIPT_URL}
+pxe-service=tag:BIOS,X86PC, "Boot from network (BIOS)", bios/pxelinux
+pxe-service=tag:!BIOS,X86PC, "Boot from network (UEFI)", uefi/syslinux.efi
+pxe-service=X86PC, "Boot from local hard disk", 0

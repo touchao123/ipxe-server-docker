@@ -1,0 +1,17 @@
+# Docker Compose configuration for the netboot server
+#
+# URLs, IPs and interface names need to be provided via environment variables
+
+version: '3'
+
+services:
+  netboot:
+    image: chao123/netboot-server:latest
+    environment:
+      IPXE_SCRIPT_URL: ${IPXE_SCRIPT_URL:-http://boot.netboot.xyz}  # HTTPS is not supported by default
+      IPXE_SERVER_IP: ${IPXE_SERVER_IP:?required variable}
+    volumes:
+      - ${IPXE_TFTP_ROOT}:/tftpboot:ro
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
