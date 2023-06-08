@@ -1,0 +1,16 @@
+# Simple HTTP server
+
+version: '3'
+
+services:
+  http:
+    image: dreamcat4/samba
+    # command: -t "Asia/Shanghai" -u "user2;password;1000;;root" -s "user2;/mount;yes;no;no;user2" -i "/root/.smbpasswd"
+    command: -t "Asia/Shanghai" -u "user1;123456;1000;users;root" -s "user1;/mount;yes;no;no;user1" 
+    ports:
+      - '139:139'
+      - '445:445'
+    volumes:
+      - ./samba_data_root:/mount
+      # - ~/.smb/smbpasswd.container1:/root/.smbpasswd
+
